@@ -79,6 +79,31 @@ void pwm_init()
   PORT->Group[LED_R0_GROUP].OUTCLR.reg = LED_R0;
   PORT->Group[LED_G0_GROUP].OUTSET.reg = LED_G0;
   PORT->Group[LED_B0_GROUP].OUTSET.reg = LED_B0;
+
+  // Page 656:
+  // Before the TCC is enabled, it must be configured as outlined by the following steps:
+  //   Enable the TCC bus clock (CLK_TCCx_APB) first
+  //   If Capture mode is required, enable the channel in capture mode by writing a one to Capture Enable bit in Control A register (CTRLA.CAPTEN)
+
+  // Optionally, the following configurations can be set before or after enabling TCC:
+  //   Select PRESCALER setting in the Control A register (CTRLA.PRESCALER)
+  //   Select Prescaler Synchronization setting in Control A register (CTRLA.PRESCSYNC)
+  //   If down-counting operation must be enabled, write a one to the Counter Direction bit in the Control B Set register (CTRLBSET.DIR)
+  //   Select the Waveform Generation operation in WAVE register (WAVE.WAVEGEN)
+  //   Select the Waveform Output Polarity in the WAVE register (WAVE.POL)
+  //   The waveform output can be inverted for the individual channels using the Waveform Output Invert Enable bit group in the Driver register (DRVCTRL.INVEN)
+
+  // The TCC is enabled by writing a one to the Enable bit in the Control A register (CTRLA.ENABLE).
+
+
+  // Page 659:
+  // The compare channels can be used for waveform generation on output port pins. To make the waveform visible on the connected pin, the following requirements must be fulfilled:
+  //   Choose a waveform generation mode in the Waveform Control register (WAVE.WAVEGEN)
+  //   Optionally invert the waveform output WO[x] by writing the corresponding Waveform Output Invert Enable bit in the Driver Control register (DRVCTRL.INVENx)
+  //   Configure the PORT module to enable the peripheral function on the pin
+
+  // Page 660:
+  // For single-slope PWM generation, the period time is controlled by PER, while CCx control the duty cycle of the generated waveform output. When up-counting, WO[x] is set at start or compare match between the COUNT and TOP values, and cleared on compare match between COUNT and CCx register values.
 }
 
 void pwm_r0_set(uint8_t hue)
