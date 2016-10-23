@@ -109,17 +109,20 @@ void pwm_init()
 
   // The TCC is enabled by writing a one to the Enable bit in the Control A register (CTRLA.ENABLE).
   
-  /*
-  TCC0->CTRLA.bit.PRESCALER = 0;
-  TCC0->CTRLA.bit.PRESCSYNC = 0;
-  TCC0->CTRLBSET.bit.DIR    = 0;
-  TCC0->WAVE.bit.WAVEGEN    = 0;
-  TCC0->WAVE.bit.POL0       = 0;
-  TCC0->WAVE.bit.POL1       = 0;
-  TCC0->WAVE.bit.POL2       = 0;
-  TCC0->WAVE.bit.POL3       = 0;
-  TCC0->DRVCTRL.bit.INVEN0  = 0;
-  */
+  TCC0->CTRLA.bit.PRESCALER   = 0;
+  TCC0->CTRLA.bit.PRESCSYNC   = 0;
+  TCC0->CTRLA.bit.RESOLUTION  = 0;        // No dithering, please!
+  TCC0->CTRLBSET.bit.DIR      = 0;
+  TCC0->WAVE.bit.WAVEGEN      = 0x2;      // Normal PWM mode
+  TCC0->WAVE.vec.POL          = 0;
+  TCC0->DRVCTRL.vec.INVEN     = 0;        // No inversion
+  TCC0->PER.reg               = 0x0000FF; // TOP is 255
+  
+  TCC0->WEXCTRL.bit.OTMX      = 0x1;      // Alternate CC0 and CC1 for all 8 outputs
+  TCC0->CC[0].bit.CC          = 0;        
+  TCC0->CC[1].bit.CC          = 0;
+  
+  TCC0->CTRLA.bit.ENABLE      = 1;
     
   // Page 659:
   // The compare channels can be used for waveform generation on output port pins. To make the waveform visible on the connected pin, the following requirements must be fulfilled:
@@ -133,12 +136,12 @@ void pwm_init()
 
 void pwm_r0_set(uint8_t hue)
 {
-  
+  TCC0->CC[1].bit.CC = hue;
 }
 
 void pwm_g0_set(uint8_t hue)
 {
-  
+  TCC0->CC[0].bit.CC = hue;
 }
 
 void pwm_b0_set(uint8_t hue)

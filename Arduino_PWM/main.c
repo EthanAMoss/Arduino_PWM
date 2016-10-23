@@ -49,11 +49,11 @@ int main(void)
     /* Initialize the SAM system */
     SystemInit();
     pwm_init();
-
+    
     /* Replace with your application code */
     while (1) 
     {
-      ;
+      pwm_r0_set(128);
     }
 }
 
