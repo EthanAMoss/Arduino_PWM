@@ -7,6 +7,7 @@
 
 #include "pwm.h"
 #include <sam.h>
+#include <component/pm.h>
 
 //------------------------------------------------------------------------------
 //      __   ___  ___         ___  __
@@ -83,6 +84,8 @@ void pwm_init()
   // Page 656:
   // Before the TCC is enabled, it must be configured as outlined by the following steps:
   //   Enable the TCC bus clock (CLK_TCCx_APB) first
+  PM->APBCMASK.bit.TCC0_ = 1;
+  
   //   If Capture mode is required, enable the channel in capture mode by writing a one to Capture Enable bit in Control A register (CTRLA.CAPTEN)
 
   // Optionally, the following configurations can be set before or after enabling TCC:

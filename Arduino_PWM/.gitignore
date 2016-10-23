@@ -1,0 +1,4 @@
+# Ignore VS files
+.vs/**
+**/Debug/**
+**/Device/**
