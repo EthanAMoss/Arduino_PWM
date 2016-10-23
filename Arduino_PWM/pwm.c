@@ -28,6 +28,10 @@
 #define LED_B0_GROUP (0)
 #define LED_B0_PIN (PIN_PA07%32)
 
+
+// Constants for Clock multiplexers
+#define GENERIC_CLOCK_MULTIPLEXER_TCC0_TCC1 (0x1A)
+
 //------------------------------------------------------------------------------
 //     ___      __   ___  __   ___  ___  __
 //      |  \ / |__) |__  |  \ |__  |__  /__`
@@ -85,6 +89,13 @@ void pwm_init()
   // Before the TCC is enabled, it must be configured as outlined by the following steps:
   //   Enable the TCC bus clock (CLK_TCCx_APB) first
   PM->APBCMASK.bit.TCC0_ = 1;
+  
+  /* ----------------------------------------------------------------------------------------------
+   * Put Generic Clock Generator 1 as source for Generic Clock Multiplexer 0x1A (TCC0 and TCC1)
+   */
+  GCLK->CLKCTRL.reg = GCLK_CLKCTRL_ID( GENERIC_CLOCK_MULTIPLEXER_TCC0_TCC1 ) | // Generic Clock Multiplexer 0
+                      GCLK_CLKCTRL_GEN_GCLK1 | // Generic Clock Generator 1 is source
+                      GCLK_CLKCTRL_CLKEN ;
   
   //   If Capture mode is required, enable the channel in capture mode by writing a one to Capture Enable bit in Control A register (CTRLA.CAPTEN)
 
