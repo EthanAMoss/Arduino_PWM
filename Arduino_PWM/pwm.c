@@ -59,16 +59,16 @@
 void pwm_init()
 {
   // Enable Multiplexing
-  PORT->Group[LED_R0_GROUP].PINCFG->bit.PMUXEN = 1;
-  PORT->Group[LED_G0_GROUP].PINCFG->bit.PMUXEN = 1;
-  PORT->Group[LED_B0_GROUP].PINCFG->bit.PMUXEN = 1;
+  PORT->Group[LED_R0_GROUP].PINCFG[LED_R0_PIN].bit.PMUXEN = 1;
+  PORT->Group[LED_G0_GROUP].PINCFG[LED_G0_PIN].bit.PMUXEN = 1;
+  PORT->Group[LED_B0_GROUP].PINCFG[LED_B0_PIN].bit.PMUXEN = 1;
   
   // Configure Multiplexing
   // R0 and G0 use Peripherial Function F (TCC0)
   // B0 uses Peripherial Function E 
-  PORT->Group[LED_R0_GROUP].PMUX->bit.PMUXO = 0x5;
-  PORT->Group[LED_G0_GROUP].PMUX->bit.PMUXO = 0x5;
-  PORT->Group[LED_B0_GROUP].PMUX->bit.PMUXO = 0x4;
+  PORT->Group[LED_R0_GROUP].PMUX[LED_R0].bit.PMUXO = 0x5;
+  PORT->Group[LED_G0_GROUP].PMUX[LED_G0].bit.PMUXO = 0x5;
+  PORT->Group[LED_B0_GROUP].PMUX[LED_B0].bit.PMUXO = 0x4;
   
   
   
@@ -94,8 +94,19 @@ void pwm_init()
   //   The waveform output can be inverted for the individual channels using the Waveform Output Invert Enable bit group in the Driver register (DRVCTRL.INVEN)
 
   // The TCC is enabled by writing a one to the Enable bit in the Control A register (CTRLA.ENABLE).
-
-
+  
+  /*
+  TCC0->CTRLA.bit.PRESCALER = 0;
+  TCC0->CTRLA.bit.PRESCSYNC = 0;
+  TCC0->CTRLBSET.bit.DIR    = 0;
+  TCC0->WAVE.bit.WAVEGEN    = 0;
+  TCC0->WAVE.bit.POL0       = 0;
+  TCC0->WAVE.bit.POL1       = 0;
+  TCC0->WAVE.bit.POL2       = 0;
+  TCC0->WAVE.bit.POL3       = 0;
+  TCC0->DRVCTRL.bit.INVEN0  = 0;
+  */
+    
   // Page 659:
   // The compare channels can be used for waveform generation on output port pins. To make the waveform visible on the connected pin, the following requirements must be fulfilled:
   //   Choose a waveform generation mode in the Waveform Control register (WAVE.WAVEGEN)
