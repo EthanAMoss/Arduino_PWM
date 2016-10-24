@@ -77,7 +77,7 @@ int main(void)
     uint8_t blue = (0xff * 2 / 3);
 
     // The speed at which we rotate
-    uint16_t delay = 5;
+    uint16_t delay = 50;
     uint16_t elapsed = 0;
     
 
@@ -93,9 +93,13 @@ int main(void)
         {
             elapsed = 0;
             // Rotate the leds
-            pwm_r0_set(++red);
-            pwm_g0_set(++green);
-            pwm_b0_set(++blue);
+            pwm_r0_set(red);
+            pwm_g0_set(green);
+            pwm_b0_set(blue);
+
+            red = (red + 1) % 0x80;
+            green = (green + 1) % 0x80;
+            blue = (blue + 1) % 0x80;
         }
     }
 }
