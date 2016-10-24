@@ -55,7 +55,8 @@ int main(void)
     while (1) 
     {
       pwm_r0_set(0);
-      pwm_g0_set(128);
+      pwm_g0_set(0);
+      pwm_b0_set(128);
     }
 }
 

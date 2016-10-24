@@ -79,6 +79,7 @@ void pwm_init()
   // Before the TCC is enabled, it must be configured as outlined by the following steps:
   //   Enable the TCC bus clock (CLK_TCCx_APB) first
   PM->APBCMASK.bit.TCC0_ = 1;
+  PM->APBCMASK.bit.TCC1_ = 1;
   
   /* ----------------------------------------------------------------------------------------------
    * Put Generic Clock Generator 1 as source for Generic Clock Multiplexer 0x1A (TCC0 and TCC1)
@@ -87,11 +88,7 @@ void pwm_init()
                       GCLK_CLKCTRL_GEN_GCLK1 | // Generic Clock Generator 1 is source
                       GCLK_CLKCTRL_CLKEN ;
   
-  //   If Capture mode is required, enable the channel in capture mode by writing a one to Capture Enable bit in Control A register (CTRLA.CAPTEN)
-
-  // Optionally, the following configurations can be set before or after enabling TCC:
-  
-  
+  // Enable TCC0 for R0 and G0
   // Select PRESCALER setting in the Control A register (CTRLA.PRESCALER)
   TCC0->CTRLA.bit.PRESCALER   = 0;        
   
@@ -130,11 +127,14 @@ void pwm_init()
   }
   
   TCC0->WEXCTRL.bit.OTMX      = 0x1;      // Alternate CC0 and CC1 for all 8 outputs
+  
+  // G0 CC
   TCC0->CC[0].bit.CC          = 0;
   while ( TCC0->SYNCBUSY.bit.CC0 )
   {
     ;
   }
+  // R0 CC
   TCC0->CC[1].bit.CC          = 0;
   while ( TCC0->SYNCBUSY.bit.CC1 )
   {
@@ -143,15 +143,55 @@ void pwm_init()
   
   // The TCC is enabled by writing a one to the Enable bit in the Control A register (CTRLA.ENABLE).
   TCC0->CTRLA.bit.ENABLE      = 1;
-    
-  // Page 659:
-  // The compare channels can be used for waveform generation on output port pins. To make the waveform visible on the connected pin, the following requirements must be fulfilled:
-  //   Choose a waveform generation mode in the Waveform Control register (WAVE.WAVEGEN)
-  //   Optionally invert the waveform output WO[x] by writing the corresponding Waveform Output Invert Enable bit in the Driver Control register (DRVCTRL.INVENx)
-  //   Configure the PORT module to enable the peripheral function on the pin
-
-  // Page 660:
-  // For single-slope PWM generation, the period time is controlled by PER, while CCx control the duty cycle of the generated waveform output. When up-counting, WO[x] is set at start or compare match between the COUNT and TOP values, and cleared on compare match between COUNT and CCx register values.
+  
+  
+   // Enable TCC1 for B0
+  // Select PRESCALER setting in the Control A register (CTRLA.PRESCALER)
+  TCC1->CTRLA.bit.PRESCALER   = 0;        
+  
+  //  Select Prescaler Synchronization setting in Control A register (CTRLA.PRESCSYNC)
+  TCC1->CTRLA.bit.PRESCSYNC   = 0;
+  
+  TCC1->CTRLA.bit.RESOLUTION  = 0;        // No dithering, please!
+  
+  //  If down-counting operation must be enabled, write a one to the Counter Direction bit in the Control B Set register (CTRLBSET.DIR)
+  TCC1->CTRLBSET.bit.DIR      = 0;
+  while ( TCC1->SYNCBUSY.bit.CTRLB )
+  {
+    ;
+  }
+  
+  //   Select the Waveform Generation operation in WAVE register (WAVE.WAVEGEN)
+  TCC1->WAVE.bit.WAVEGEN      = 0x2;      // Normal PWM mode
+  while ( TCC1->SYNCBUSY.bit.WAVE )
+  {
+    ;
+  }
+  
+  //   Select the Waveform Output Polarity in the WAVE register (WAVE.POL)
+  TCC1->WAVE.vec.POL          = 0;
+  while ( TCC1->SYNCBUSY.bit.WAVE )
+  {
+    ;
+  }
+  
+  //   The waveform output can be inverted for the individual channels using the Waveform Output Invert Enable bit group in the Driver register (DRVCTRL.INVEN)
+  TCC1->DRVCTRL.vec.INVEN     = 0;        // No inversion
+  TCC1->PER.reg               = 0x0000FF; // TOP is 255
+  while ( TCC1->SYNCBUSY.bit.PER )
+  {
+    ;
+  }
+  
+  TCC1->WEXCTRL.bit.OTMX      = 0x2;      // CC0 for all 8 outputs
+  // B0 CC
+  TCC1->CC[0].bit.CC          = 0;
+  while ( TCC1->SYNCBUSY.bit.CC0 )
+  {
+    ;
+  }
+  
+  TCC1->CTRLA.bit.ENABLE      = 1;
 }
 
 void pwm_r0_set(uint8_t hue)
@@ -174,7 +214,11 @@ void pwm_g0_set(uint8_t hue)
 
 void pwm_b0_set(uint8_t hue)
 {
-  ;
+  TCC1->CC[0].bit.CC = hue;
+  while ( TCC1->SYNCBUSY.bit.CC0 )
+  {
+    ;
+  }
 }
 
 //------------------------------------------------------------------------------
