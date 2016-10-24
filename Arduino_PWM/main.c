@@ -84,7 +84,6 @@ int main(void)
     /* Replace with your application code */
     while (1) 
     {
-<<<<<<< HEAD
         // Delay before going again.
         DelayMs(1);
         elapsed++;

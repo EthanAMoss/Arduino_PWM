@@ -183,10 +183,10 @@ void pwm_init()
     ;
   }
   
-  TCC1->WEXCTRL.bit.OTMX      = 0x2;      // CC0 for all 8 outputs
+  TCC1->WEXCTRL.bit.OTMX      = 0x1;      // Alternate CC0 and CC1
   // B0 CC
-  TCC1->CC[0].bit.CC          = 0;
-  while ( TCC1->SYNCBUSY.bit.CC0 )
+  TCC1->CC[1].bit.CC          = 0;
+  while ( TCC1->SYNCBUSY.bit.CC1 )
   {
     ;
   }
@@ -214,8 +214,8 @@ void pwm_g0_set(uint8_t hue)
 
 void pwm_b0_set(uint8_t hue)
 {
-  TCC1->CC[0].bit.CC = hue;
-  while ( TCC1->SYNCBUSY.bit.CC0 )
+  TCC1->CC[1].bit.CC = hue;
+  while ( TCC1->SYNCBUSY.bit.CC1 )
   {
     ;
   }
