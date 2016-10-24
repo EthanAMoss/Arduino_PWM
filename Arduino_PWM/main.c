@@ -50,10 +50,12 @@ int main(void)
     SystemInit();
     pwm_init();
     
+
     /* Replace with your application code */
     while (1) 
     {
-      pwm_r0_set(128);
+      pwm_r0_set(0);
+      pwm_g0_set(128);
     }
 }
 

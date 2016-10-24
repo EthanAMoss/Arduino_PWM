@@ -71,19 +71,9 @@ void pwm_init()
   // Configure Multiplexing
   // R0 and G0 use Peripherial Function F (TCC0)
   // B0 uses Peripherial Function E 
-  PORT->Group[LED_R0_GROUP].PMUX[LED_R0].bit.PMUXO = 0x5;
-  PORT->Group[LED_G0_GROUP].PMUX[LED_G0].bit.PMUXO = 0x5;
-  PORT->Group[LED_B0_GROUP].PMUX[LED_B0].bit.PMUXO = 0x4;
-  
-  
-  
-  PORT->Group[LED_R0_GROUP].DIRSET.reg = LED_R0;
-  PORT->Group[LED_G0_GROUP].DIRSET.reg = LED_G0;
-  PORT->Group[LED_B0_GROUP].DIRSET.reg = LED_B0;
-  
-  PORT->Group[LED_R0_GROUP].OUTCLR.reg = LED_R0;
-  PORT->Group[LED_G0_GROUP].OUTSET.reg = LED_G0;
-  PORT->Group[LED_B0_GROUP].OUTSET.reg = LED_B0;
+  PORT->Group[LED_R0_GROUP].PMUX[LED_R0_PIN / 2].bit.PMUXO = 0x5;
+  PORT->Group[LED_G0_GROUP].PMUX[LED_G0_PIN / 2].bit.PMUXE = 0x5;
+  PORT->Group[LED_B0_GROUP].PMUX[LED_B0_PIN / 2].bit.PMUXO = 0x4;
 
   // Page 656:
   // Before the TCC is enabled, it must be configured as outlined by the following steps:
@@ -100,28 +90,58 @@ void pwm_init()
   //   If Capture mode is required, enable the channel in capture mode by writing a one to Capture Enable bit in Control A register (CTRLA.CAPTEN)
 
   // Optionally, the following configurations can be set before or after enabling TCC:
-  //   Select PRESCALER setting in the Control A register (CTRLA.PRESCALER)
-  //   Select Prescaler Synchronization setting in Control A register (CTRLA.PRESCSYNC)
-  //   If down-counting operation must be enabled, write a one to the Counter Direction bit in the Control B Set register (CTRLBSET.DIR)
-  //   Select the Waveform Generation operation in WAVE register (WAVE.WAVEGEN)
-  //   Select the Waveform Output Polarity in the WAVE register (WAVE.POL)
-  //   The waveform output can be inverted for the individual channels using the Waveform Output Invert Enable bit group in the Driver register (DRVCTRL.INVEN)
-
-  // The TCC is enabled by writing a one to the Enable bit in the Control A register (CTRLA.ENABLE).
   
-  TCC0->CTRLA.bit.PRESCALER   = 0;
+  
+  // Select PRESCALER setting in the Control A register (CTRLA.PRESCALER)
+  TCC0->CTRLA.bit.PRESCALER   = 0;        
+  
+  //  Select Prescaler Synchronization setting in Control A register (CTRLA.PRESCSYNC)
   TCC0->CTRLA.bit.PRESCSYNC   = 0;
+  
   TCC0->CTRLA.bit.RESOLUTION  = 0;        // No dithering, please!
+  
+  //  If down-counting operation must be enabled, write a one to the Counter Direction bit in the Control B Set register (CTRLBSET.DIR)
   TCC0->CTRLBSET.bit.DIR      = 0;
+  while ( TCC0->SYNCBUSY.bit.CTRLB )
+  {
+    ;
+  }
+  
+  //   Select the Waveform Generation operation in WAVE register (WAVE.WAVEGEN)
   TCC0->WAVE.bit.WAVEGEN      = 0x2;      // Normal PWM mode
+  while ( TCC0->SYNCBUSY.bit.WAVE )
+  {
+    ;
+  }
+  
+  //   Select the Waveform Output Polarity in the WAVE register (WAVE.POL)
   TCC0->WAVE.vec.POL          = 0;
+  while ( TCC0->SYNCBUSY.bit.WAVE )
+  {
+    ;
+  }
+  
+  //   The waveform output can be inverted for the individual channels using the Waveform Output Invert Enable bit group in the Driver register (DRVCTRL.INVEN)
   TCC0->DRVCTRL.vec.INVEN     = 0;        // No inversion
   TCC0->PER.reg               = 0x0000FF; // TOP is 255
+  while ( TCC0->SYNCBUSY.bit.PER )
+  {
+    ;
+  }
   
   TCC0->WEXCTRL.bit.OTMX      = 0x1;      // Alternate CC0 and CC1 for all 8 outputs
-  TCC0->CC[0].bit.CC          = 0;        
+  TCC0->CC[0].bit.CC          = 0;
+  while ( TCC0->SYNCBUSY.bit.CC0 )
+  {
+    ;
+  }
   TCC0->CC[1].bit.CC          = 0;
+  while ( TCC0->SYNCBUSY.bit.CC1 )
+  {
+    ;
+  }
   
+  // The TCC is enabled by writing a one to the Enable bit in the Control A register (CTRLA.ENABLE).
   TCC0->CTRLA.bit.ENABLE      = 1;
     
   // Page 659:
@@ -137,16 +157,24 @@ void pwm_init()
 void pwm_r0_set(uint8_t hue)
 {
   TCC0->CC[1].bit.CC = hue;
+  while ( TCC0->SYNCBUSY.bit.CC1 )
+  {
+    ;
+  }
 }
 
 void pwm_g0_set(uint8_t hue)
 {
   TCC0->CC[0].bit.CC = hue;
+  while ( TCC0->SYNCBUSY.bit.CC0 )
+  {
+    ;
+  }
 }
 
 void pwm_b0_set(uint8_t hue)
 {
-  
+  ;
 }
 
 //------------------------------------------------------------------------------
