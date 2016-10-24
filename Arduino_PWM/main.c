@@ -80,9 +80,11 @@ int main(void)
     uint16_t delay = 5;
     uint16_t elapsed = 0;
     
+
     /* Replace with your application code */
     while (1) 
     {
+<<<<<<< HEAD
         // Delay before going again.
         DelayMs(1);
         elapsed++;
