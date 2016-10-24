@@ -120,7 +120,7 @@ void pwm_init()
   
   //   The waveform output can be inverted for the individual channels using the Waveform Output Invert Enable bit group in the Driver register (DRVCTRL.INVEN)
   TCC0->DRVCTRL.vec.INVEN     = 0;        // No inversion
-  TCC0->PER.reg               = LED_FULLY_ON; // TOP is 255
+  TCC0->PER.reg               = LED_FULL_BRIGHTNESS; // TOP is 255
   while ( TCC0->SYNCBUSY.bit.PER )
   {
     ;
@@ -177,7 +177,7 @@ void pwm_init()
   
   //   The waveform output can be inverted for the individual channels using the Waveform Output Invert Enable bit group in the Driver register (DRVCTRL.INVEN)
   TCC1->DRVCTRL.vec.INVEN     = 0;        // No inversion
-  TCC1->PER.reg               = LED_FULLY_ON; // TOP is 255
+  TCC1->PER.reg               = LED_FULL_BRIGHTNESS; // TOP is 255
   while ( TCC1->SYNCBUSY.bit.PER )
   {
     ;

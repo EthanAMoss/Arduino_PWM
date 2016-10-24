@@ -17,8 +17,12 @@
 //
 //------------------------------------------------------------------------------
 
-#define LED_FULLY_ON  (0xFF)
-#define LED_OFF       (0x00)
+// The value for full brightness is arbitrary; changing it adjusts the # of
+// steps to complete a fade, meaning that if a delay is performed on each step, 
+// having a lower value here will increase the fade speed
+#define LED_FULL_BRIGHTNESS (0xFF)
+#define LED_HALF_BRIGHTNESS (LED_FULL_BRIGHTNESS/2)
+#define LED_OFF             (0x00)
 
 //------------------------------------------------------------------------------
 //     ___      __   ___  __   ___  ___  __
