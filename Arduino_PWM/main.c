@@ -114,6 +114,7 @@ void fade_in_led(uint8_t led)
 {
   int current_val = LED_OFF;
   
+  // change the first value to LED_FULL_BRIGHTNESS to get the full range
   while (LED_HALF_BRIGHTNESS > current_val)
   {
     DelayMs(fade_delay);
@@ -139,6 +140,7 @@ void fade_in_led(uint8_t led)
 //==============================================================================
 void fade_out_led(uint8_t led)
 {
+  // change to LED_FULL_BRIGHTNESS if using the full range of brightness
   int current_val = LED_HALF_BRIGHTNESS;
   
   while (LED_OFF < current_val)
