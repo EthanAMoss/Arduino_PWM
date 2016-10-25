@@ -97,6 +97,10 @@ void pwm_init()
   
   TCC0->CTRLA.bit.RESOLUTION  = 0;        // No dithering, please!
   
+  // Enable Double-Buffering
+  TCC0->CTRLBCLR.bit.LUPD     = 1;
+  while ( TCC0->SYNCBUSY.bit.CTRLB );
+  
   //  If down-counting operation must be enabled, write a one to the Counter Direction bit in the Control B Set register (CTRLBSET.DIR)
   TCC0->CTRLBSET.bit.DIR      = 0;
   while ( TCC0->SYNCBUSY.bit.CTRLB )
@@ -145,7 +149,7 @@ void pwm_init()
   TCC0->CTRLA.bit.ENABLE      = 1;
   
   
-   // Enable TCC1 for B0
+  // Enable TCC1 for B0
   // Select PRESCALER setting in the Control A register (CTRLA.PRESCALER)
   TCC1->CTRLA.bit.PRESCALER   = 0;        
   
@@ -153,6 +157,10 @@ void pwm_init()
   TCC1->CTRLA.bit.PRESCSYNC   = 0;
   
   TCC1->CTRLA.bit.RESOLUTION  = 0;        // No dithering, please!
+  
+  // Enable Double-Buffering
+  TCC1->CTRLBCLR.bit.LUPD     = 1;
+  while ( TCC1->SYNCBUSY.bit.CTRLB );
   
   //  If down-counting operation must be enabled, write a one to the Counter Direction bit in the Control B Set register (CTRLBSET.DIR)
   TCC1->CTRLBSET.bit.DIR      = 0;
@@ -196,8 +204,8 @@ void pwm_init()
 
 void pwm_r0_set(uint8_t hue)
 {
-  TCC0->CC[1].bit.CC = hue;
-  while ( TCC0->SYNCBUSY.bit.CC1 )
+  TCC0->CCB[1].bit.CCB = hue;
+  while ( TCC0->SYNCBUSY.bit.CCB1 )
   {
     ;
   }
@@ -205,8 +213,8 @@ void pwm_r0_set(uint8_t hue)
 
 void pwm_g0_set(uint8_t hue)
 {
-  TCC0->CC[0].bit.CC = hue;
-  while ( TCC0->SYNCBUSY.bit.CC0 )
+  TCC0->CCB[0].bit.CCB = hue;
+  while ( TCC0->SYNCBUSY.bit.CCB0 )
   {
     ;
   }
@@ -214,8 +222,8 @@ void pwm_g0_set(uint8_t hue)
 
 void pwm_b0_set(uint8_t hue)
 {
-  TCC1->CC[1].bit.CC = hue;
-  while ( TCC1->SYNCBUSY.bit.CC1 )
+  TCC1->CCB[1].bit.CCB = hue;
+  while ( TCC1->SYNCBUSY.bit.CCB1 )
   {
     ;
   }
